@@ -8,6 +8,10 @@ obtener_sesion_actual() -> list[dict]
     Scrapea el índice de opendata y extrae todos los links JSON de votación
     de la sesión más reciente publicada.
 
+obtener_sesion_por_fecha(fecha_ddmmaaaa) -> list[dict]
+    Scrapea el índice de opendata para una fecha concreta (formato DD/MM/AAAA).
+    Devuelve [] si no hay sesión ese día.
+
 desde_urls(urls) -> list[dict]
     Construye la misma estructura a partir de una lista de URLs dada
     manualmente (útil para sesiones históricas o tests).
@@ -62,6 +66,36 @@ def obtener_sesion_actual() -> list[dict]:
       {"sesion": 202, "fecha": "20260930", "num_votacion": 1, "url": "https://...json"}
     """
     html = _fetch(OPENDATA_URL)
+    resultados = []
+    seen = set()
+    for m in _PATH_RE.finditer(html):
+        path = m.group(0)
+        if path in seen:
+            continue
+        seen.add(path)
+        entry = _path_to_dict(path)
+        if entry:
+            resultados.append(entry)
+    resultados.sort(key=lambda d: d["num_votacion"])
+    return resultados
+
+
+def obtener_sesion_por_fecha(fecha_ddmmaaaa: str) -> list[dict]:
+    """
+    Descarga el HTML del opendata para una fecha concreta.
+    fecha_ddmmaaaa: "DD/MM/AAAA"  (p. ej. "23/09/2026")
+    Devuelve [] si no hay votaciones ese día.
+    """
+    url = (
+        f"{OPENDATA_URL}?p_p_id=votaciones&p_p_lifecycle=0"
+        f"&p_p_state=normal&p_p_mode=view"
+        f"&targetLegislatura=XV&targetDate={fecha_ddmmaaaa}"
+    )
+    try:
+        html = _fetch(url)
+    except Exception:
+        return []
+
     resultados = []
     seen = set()
     for m in _PATH_RE.finditer(html):

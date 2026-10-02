@@ -9,4 +9,3 @@ build/
 .DS_Store
 *.raw
 data/*.html
-data/votaciones.csv
