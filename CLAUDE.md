@@ -103,8 +103,47 @@ Ejemplo de salida aprobado por el usuario:
 
 Las 14 votaciones de esa sesión cubren PNL, mociones por puntos, una enmienda a la totalidad y convenios. Es un buen caso de prueba.
 
+## Herramienta construida (scripts/)
+
+### Uso
+```bash
+# Sesión del día (automático):
+python scripts/main.py
+
+# Sesión pasada (manual, pegar URLs del índice):
+python scripts/main.py --urls URL1 URL2 ...
+
+# Opciones: --limit N  --out data/otro.csv
+```
+
+### Módulos
+| Script | Función |
+|---|---|
+| `sesiones.py` | Scraping del índice de opendata → lista de URLs JSON |
+| `votaciones.py` | Descarga y parseo de cada JSON de votación |
+| `orden_dia.py` | Descarga tramit_pleno{fecha}_{N}.pdf → expedientes + BOCG URLs |
+| `expedientes.py` | Clasifica tipo, proponente, punto; usa orden_dia cuando disponible |
+| `grupos.py` | Agrega votos por grupo; desglosa Mixto con mixto_partidos.json |
+| `bocg.py` | Descarga PDF del BOCG, extrae texto relevante con pypdf |
+| `csv_io.py` | Lectura/escritura del CSV con upsert por (sesion, num_votacion) |
+| `main.py` | Orquestador; `titulo` y `resumen` se dejan vacíos para rellenar |
+
+### Hallazgos técnicos
+- El índice opendata (`/es/opendata/votaciones`) solo muestra la sesión más reciente con todos sus links JSON. No hay API para sesiones anteriores.
+- El expediente (162/000814) **no está en el JSON de votación**; hay que extraerlo del PDF del orden del día (`tramit_pleno{AAAAMMDD}_{N}.pdf`).
+- Los timestamps de los ficheros JSON son impredecibles (no siguen patrón horario fijo).
+- El Grupo Mixto se desglosa usando `data/mixto_partidos.json` (generado por `descargar_mixto.py`).
+- Mociones (173/): sin BOCG el día de la votación → texto vacío.
+- BOCG-15-D-518 devuelve 404 aunque está citado en el orden del día.
+
+### Columnas del CSV
+`fecha, sesion, num_votacion, expediente, tipo, punto, titulo*, resumen*, grupo_inicia, es_enmienda_totalidad, resultado, si_total, no_total, abs_total, PP_voto, PSOE_voto, Vox_voto, Sumar_voto, ERC_voto, Junts_voto, Bildu_voto, PNV_voto, MxSUMAR_voto, MxBNG_voto, MxCCa_voto, MxUPN_voto, MxVOX_voto`
+
+*`titulo` y `resumen` se rellenan manualmente con ayuda del LLM a partir del texto del BOCG.
+
 ## Pendiente / decisiones abiertas
-- El usuario anunció cambios sobre el formato del ejemplo: preguntarle antes de implementar.
-- Formato de entrega final (hoja de cálculo, web con filtros, Markdown…): sin decidir.
-- Cobertura: todas las sesiones plenarias de 2026 (varios cientos de votaciones). Hay que descubrir la lista de sesiones y sus ZIP (el índice de datos abiertos solo enlaza la última; explorar la web o probar a recorrer los números de sesión).
-- Comisiones: fuera del alcance por ahora (solo Pleno).
+- **Rellenar títulos y resúmenes** de las 21 votaciones de la sesión 202 (siguiente paso inmediato).
+- **Sesiones pasadas**: descubrimiento de URLs manual (estrategia C). Mejorar en el futuro.
+- **Formato de entrega final** (web con filtros, app móvil, etc.): sin decidir.
+- **Cobertura**: solo sesión actual por ahora. Para cubrir 2026 completo, habría que ejecutar la herramienta día a día o encontrar forma de recuperar sesiones pasadas.
+- **Comisiones**: fuera del alcance (solo Pleno).
