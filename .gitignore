@@ -1,4 +1,5 @@
 .claude/
+RESUMENES.md
 __pycache__/
 *.py[cod]
 *.pyo
