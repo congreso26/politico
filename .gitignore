@@ -1,0 +1,11 @@
+.claude/
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+*.egg-info/
+dist/
+build/
+.DS_Store
+*.raw
+data/*.html
