@@ -8,7 +8,7 @@ from pathlib import Path
 
 COLUMNAS = [
     "fecha", "sesion", "num_votacion", "expediente", "tipo", "punto",
-    "titulo", "resumen", "grupo_inicia", "es_enmienda_totalidad",
+    "titulo", "resumen", "sin_texto", "grupo_inicia", "es_enmienda_totalidad",
     "resultado", "si_total", "no_total", "abs_total",
     "PP_voto", "PSOE_voto", "Vox_voto", "Sumar_voto",
     "ERC_voto", "Junts_voto", "Bildu_voto", "PNV_voto",
@@ -32,30 +32,33 @@ def leer_todo(ruta: str = "data/votaciones.csv") -> list[dict]:
 
 def escribir_fila(fila: dict, ruta: str = "data/votaciones.csv") -> None:
     """
-    Añade o sobreescribe una fila en el CSV.
+    Añade o actualiza una fila en el CSV.
     Si el fichero no existe, lo crea con cabecera.
-    Si ya existe una fila con el mismo (sesion, num_votacion), la reemplaza.
-    Campos ausentes → cadena vacía.
+    Si ya existe una fila con el mismo (sesion, num_votacion), hace MERGE:
+    solo sobreescribe los campos presentes en fila; el resto se conserva.
+    Campos nuevos ausentes en filas existentes → cadena vacía.
     """
     path = Path(ruta)
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Normalizar: rellenar campos ausentes con ""
-    fila_norm = {col: str(fila.get(col, "")) for col in COLUMNAS}
-
     existentes = leer_todo(ruta)
-    clave = clave_unica(fila_norm)
+    clave = clave_unica(fila)
 
     nueva_lista = []
     reemplazado = False
     for row in existentes:
         if clave_unica(row) == clave:
-            nueva_lista.append(fila_norm)
+            # Merge: partir de la fila existente y sobreescribir solo lo que viene
+            merged = {col: row.get(col, "") for col in COLUMNAS}
+            for col, val in fila.items():
+                if col in COLUMNAS:
+                    merged[col] = str(val)
+            nueva_lista.append(merged)
             reemplazado = True
         else:
-            nueva_lista.append(row)
+            nueva_lista.append({col: row.get(col, "") for col in COLUMNAS})
     if not reemplazado:
-        nueva_lista.append(fila_norm)
+        nueva_lista.append({col: str(fila.get(col, "")) for col in COLUMNAS})
 
     with path.open("w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=COLUMNAS)
