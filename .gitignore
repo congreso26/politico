@@ -10,3 +10,5 @@ build/
 .DS_Store
 *.raw
 data/*.html
+data/pdf_cache/
+data/iniciativas/

@@ -137,9 +137,17 @@ python scripts/main.py --urls URL1 URL2 ...
 - BOCG-15-D-518 devuelve 404 aunque está citado en el orden del día.
 
 ### Columnas del CSV
-`fecha, sesion, num_votacion, expediente, tipo, punto, titulo*, resumen*, grupo_inicia, es_enmienda_totalidad, resultado, si_total, no_total, abs_total, PP_voto, PSOE_voto, Vox_voto, Sumar_voto, ERC_voto, Junts_voto, Bildu_voto, PNV_voto, MxSUMAR_voto, MxBNG_voto, MxCCa_voto, MxUPN_voto, MxVOX_voto`
+`fecha, sesion, num_votacion, expediente, tipo, punto, titulo*, resumen*, resumen_aproximado, sin_texto, texto_votado, confianza_texto, fuente_texto, grupo_inicia, es_enmienda, es_enmienda_totalidad, resultado, si_total, no_total, abs_total, PP_voto, PSOE_voto, Vox_voto, Sumar_voto, ERC_voto, Junts_voto, Bildu_voto, PNV_voto, MxSUMAR_voto, MxBNG_voto, MxCCa_voto, MxUPN_voto, MxVOX_voto`
 
 *`titulo` y `resumen` se rellenan manualmente con ayuda del LLM a partir del texto del BOCG.
+
+## Flujo de textos y resúmenes (rehecho: datos de la XV Legislatura completa)
+1. `scripts/mapa_expedientes.py`: expediente de cada votación, cruzando con el orden del día (`data/mapa_expedientes.csv`). Falla en sesiones sin PDF (2, 3, 9, 11, 73, 171-177) y puede cruzar mal; corregidos a mano los casos conocidos.
+2. `scripts/iniciativas.py`: ficha de la iniciativa → BOCG → texto y puntos. Los «404» del BOCG son versiones corregidas con sufijo `-C1`.
+3. Texto realmente votado por votación: `data/votaciones_texto/*.jsonl` (texto_votado, fuente_url, confianza alta/media/baja/ninguna), volcado con `scripts/volcar_textos.py`.
+4. Títulos y resúmenes: `data/resumenes/*.jsonl`, volcado con `scripts/volcar_resumenes.py`. Anónimos, sin resultado, 2 frases. `resumen_aproximado` = texto cortado o confianza no alta.
+5. `es_enmienda` marca enmiendas (se pueden excluir del quiz). Las enmiendas a la totalidad no entran en esa marca.
+6. Estado y pendientes: `PLAN_REHACER.md` (sesión 203 sin votaciones publicadas a 3/10/2026; 26 votaciones sin texto: correcciones técnicas y votos particulares).
 
 ## Pendiente / decisiones abiertas
 - **Rellenar títulos y resúmenes** de las 21 votaciones de la sesión 202 (siguiente paso inmediato).

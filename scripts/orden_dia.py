@@ -18,7 +18,7 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; scraper-congreso/1.0)"}
 BASE = "https://www.congreso.es/docu/tramit/LegXV"
 
 # Regex para extraer expedientes del PDF
-_RE_EXPTE   = re.compile(r"N[uú]m\.\s*expte\.\s*([\d]+/[\d]+)", re.IGNORECASE)
+_RE_EXPTE   = re.compile(r"N[uú]m\.\s*expte\.?\s*([\d]+/[\d]+)", re.IGNORECASE)
 _RE_BOCG_CG = re.compile(
     r'"BOCG\.\s*Cortes Generales"[^,]*,\s*serie\s*([A-Z])[^,]*,\s*n[uú]m(?:ero)?\.?\s*(\d+)',
     re.IGNORECASE,

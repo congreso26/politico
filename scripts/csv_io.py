@@ -8,7 +8,8 @@ from pathlib import Path
 
 COLUMNAS = [
     "fecha", "sesion", "num_votacion", "expediente", "tipo", "punto",
-    "titulo", "resumen", "sin_texto", "grupo_inicia", "es_enmienda_totalidad",
+    "titulo", "resumen", "resumen_aproximado", "sin_texto", "grupo_inicia", "es_enmienda", "es_enmienda_totalidad",
+    "texto_votado", "confianza_texto", "fuente_texto",
     "resultado", "si_total", "no_total", "abs_total",
     "PP_voto", "PSOE_voto", "Vox_voto", "Sumar_voto",
     "ERC_voto", "Junts_voto", "Bildu_voto", "PNV_voto",
