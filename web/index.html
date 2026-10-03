@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>¿Estoy votando bien? Test de afinidad con el Congreso</title>
+<meta name="description" content="Vota propuestas reales del Pleno del Congreso (XV Legislatura) sin saber quién las presentó y descubre con qué grupos coincides. Basado en datos oficiales; resúmenes redactados con IA.">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1d1f23;--muted:#62666e;--line:#dedbd4;--acc:#1f4fd8;--acc-ink:#fff;
+ --yes:#1b7f4c;--no:#b3261e;--abs:#6b6f78;--bar:#1f4fd8;--bar-bg:#e8e6e0}
+@media (prefers-color-scheme:dark){:root{--bg:#121316;--card:#1b1d22;--ink:#ecebe7;--muted:#9aa0a9;--line:#2e3138;--acc:#7aa2ff;--acc-ink:#0b1020;
+ --yes:#4cc38a;--no:#ff8a80;--abs:#aab0ba;--bar:#7aa2ff;--bar-bg:#2a2d34}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:16px 16px calc(120px + env(safe-area-inset-bottom))}
+h1{font-size:1.6rem;line-height:1.25;margin:8px 0 6px}
+h2{font-size:1.15rem;margin:24px 0 8px}
+p{margin:8px 0}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:12px 16px}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.primary{background:var(--acc);color:var(--acc-ink);border-color:var(--acc);font-weight:600;padding:14px 22px}
+.link{background:none;border:none;color:var(--acc);padding:6px 0;text-decoration:underline}
+label{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
+input[type=range]{width:100%}
+.big{font-size:2rem;font-weight:700}
+.q-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem;margin-bottom:8px}
+.progress{height:6px;background:var(--bar-bg);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.progress>i{display:block;height:100%;background:var(--bar);width:0;transition:width .25s}
+.q-title{font-size:1.25rem;line-height:1.3;margin:4px 0 10px;font-weight:650}
+.q-sum{margin:0;font-size:1.02rem}
+.tag{display:inline-block;font-size:.78rem;border:1px solid var(--line);border-radius:99px;padding:1px 9px;margin:0 6px 8px 0;color:var(--muted)}
+.answers{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);
+ padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center;z-index:5}
+.answers .wrap{display:flex;gap:8px;width:100%;max-width:720px}
+.answers button{flex:1;font-weight:700;padding:16px 6px;font-size:1rem;letter-spacing:.02em}
+.b-yes{border:2px solid var(--yes);color:var(--yes)} .b-no{border:2px solid var(--no);color:var(--no)} .b-abs{border:2px solid var(--abs);color:var(--abs)}
+.b-yes:hover,.b-yes:active{background:var(--yes);color:var(--card)} .b-no:hover,.b-no:active{background:var(--no);color:var(--card)} .b-abs:hover,.b-abs:active{background:var(--abs);color:var(--card)}
+.hint{font-size:.85rem;color:var(--muted);text-align:center;margin-top:10px}
+.kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:.8rem}
+.res{display:grid;grid-template-columns:minmax(92px,150px) 1fr 52px;gap:10px;align-items:center;margin:9px 0}
+.res .name{font-weight:600}
+.res .bar{height:16px;background:var(--bar-bg);border-radius:99px;overflow:hidden}
+.res .bar>i{display:block;height:100%;background:var(--bar)}
+.res .pct{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.res small{display:block;color:var(--muted);font-weight:400}
+details{border-top:1px solid var(--line);padding:10px 0}
+summary{cursor:pointer;font-weight:600}
+.grp{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-size:.88rem;color:var(--muted)}
+.grp b{color:var(--ink)}
+.v-S{color:var(--yes)} .v-N{color:var(--no)} .v-A{color:var(--abs)}
+.hidden{display:none!important}
+.err{color:var(--no)}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
+.top .brand{font-weight:700;color:var(--muted);font-size:.9rem}
+.info{padding:8px 14px;font-size:.92rem}
+.notice{border-left:4px solid var(--no);background:var(--card);padding:10px 14px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.93rem}
+dialog{width:min(720px,calc(100% - 24px));max-height:calc(100% - 24px);border:1px solid var(--line);border-radius:16px;padding:0;background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+dialog .head{position:sticky;top:0;background:var(--card);display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+dialog .head h2{margin:0}
+dialog .body{padding:6px 18px 20px}
+dialog h3{margin:20px 0 4px;font-size:1.02rem}
+dialog ol,dialog ul{padding-left:22px;margin:6px 0}
+dialog li{margin:5px 0}
+code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
+@media (min-width:700px){main{padding-top:32px}.answers .wrap{max-width:720px}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><span class="brand">Test de afinidad con el Congreso</span><button class="info" id="openInfo" type="button">¿Cómo se ha hecho?</button></div>
+<section id="intro">
+  <h1>¿Estoy votando bien?</h1>
+  <p class="muted">Te presentamos propuestas reales votadas en el Pleno del Congreso de los Diputados (XV Legislatura) <strong>sin decirte quién las presentó</strong>. Tú decides si las aprobarías, rechazarías o te abstendrías. Al final verás con qué grupos coincides.</p>
+  <div class="card">
+    <label for="n" class="row" style="margin:0 0 4px"><span>Número de preguntas: <strong id="nval">20</strong></span></label>
+    <input id="n" type="range" min="5" max="60" step="5" value="20">
+    <label><input type="checkbox" id="enm" checked> <span>Incluir enmiendas a leyes <span class="muted">(más técnicas)</span></span></label>
+    <label><input type="checkbox" id="apr" checked> <span>Incluir propuestas con resumen aproximado <span class="muted">(el texto oficial es parcial)</span></span></label>
+    <div class="row" style="margin-top:14px"><button class="primary" id="start" disabled>Empezar</button><span id="load" class="muted">Cargando datos…</span></div>
+    <p id="count" class="muted" style="font-size:.9rem"></p>
+  </div>
+  <p class="muted" id="periodo" style="font-size:.9rem"></p>
+  <div class="notice"><strong>Los títulos y resúmenes los ha redactado una IA</strong> a partir del texto oficial y pueden contener errores. Los votos de los grupos son datos oficiales del Congreso. Todo ocurre en tu navegador: tus respuestas no se envían a ningún sitio. <button class="link" type="button" id="openInfo2">Ver cómo se ha hecho</button></div>
+</section>
+
+<section id="quiz" class="hidden">
+  <div class="q-meta"><span id="qn"></span><button class="link" id="back">← Atrás</button></div>
+  <div class="progress"><i id="bar"></i></div>
+  <article class="card" aria-live="polite">
+    <div id="tags"></div>
+    <h2 class="q-title" id="qt" style="margin-top:0"></h2>
+    <p class="q-sum" id="qs"></p>
+  </article>
+  <p class="hint">Atajos de teclado: <span class="kbd">1</span> aprobar · <span class="kbd">2</span> rechazar · <span class="kbd">3</span> abstención</p>
+  <div class="answers"><div class="wrap">
+    <button class="b-yes" data-a="S">APROBAR</button>
+    <button class="b-no" data-a="N">RECHAZAR</button>
+    <button class="b-abs" data-a="A">ABSTENCIÓN</button>
+  </div></div>
+</section>
+
+<section id="results" class="hidden">
+  <h1>Tu afinidad</h1>
+  <p class="muted">Porcentaje de coincidencia entre tus respuestas y la posición de cada grupo en esas mismas votaciones.</p>
+  <div class="card" id="rank"></div>
+  <div class="notice" id="disc">Este resultado es orientativo. Si no te convence, o quieres comprobarlo, <strong>consulta la documentación oficial del Congreso</strong> (<a href="https://www.congreso.es" target="_blank" rel="noopener">congreso.es</a>): la IA puede haber cometido errores en los textos y resúmenes. <strong>Puedes estar votando a quien no te representa.</strong></div>
+  <p class="muted" style="font-size:.88rem" id="how"></p>
+  <h2>Repaso de tus respuestas</h2>
+  <div class="card" id="review"></div>
+  <div class="row" style="margin-top:18px"><button class="primary" id="again">Repetir con otras preguntas</button></div>
+</section>
+</main>
+
+<dialog id="info" aria-labelledby="infoT">
+  <div class="head"><h2 id="infoT">¿Cómo se ha hecho?</h2><button type="button" id="closeInfo" aria-label="Cerrar">Cerrar ✕</button></div>
+  <div class="body">
+    <h3>Qué datos usa</h3>
+    <p>Las votaciones del Pleno del Congreso de los Diputados durante la <strong>XV Legislatura</strong>, que comenzó el 17 de agosto de 2023 con la constitución de las Cortes Generales y sigue en curso. Esta versión incluye votaciones desde el <strong id="d1">…</strong> hasta el <strong id="d2">…</strong> (<span id="dn">…</span> propuestas). Solo se incluye el Pleno; no las comisiones.</p>
+
+    <h3>Cómo se han extraído (proceso semiautomático)</h3>
+    <ol>
+      <li><strong>Votos oficiales.</strong> Se descargan del portal de datos abiertos del Congreso (<code>congreso.es/es/opendata/votaciones</code>) los ficheros de cada votación, con el voto de cada diputado.</li>
+      <li><strong>Posición de cada grupo.</strong> Se calcula a partir de esos votos (ver el algoritmo más abajo).</li>
+      <li><strong>Qué se votaba.</strong> Los datos de votación solo dicen «Punto 3» o «Enmienda 9». Para saber qué era, se cruza cada votación con el orden del día de la sesión para obtener el número de expediente, y se localiza el texto en el Boletín Oficial de las Cortes Generales (BOCG), el Diario de Sesiones o el BOE. Este cruce se hizo con programas y se revisó a mano solo en los casos sospechosos, por lo que puede haber algún error.</li>
+      <li><strong>Resúmenes redactados por una IA.</strong> <strong>El título y el resumen de cada propuesta los ha escrito una inteligencia artificial</strong> a partir del texto oficial, con tres reglas: no mencionar ni grupos ni partidos ni personas, no decir si salió aprobada o rechazada, y describir solo lo que se vota. Cuando el texto no estaba publicado entero o hubo que reconstruirlo, el resumen se marca como «aproximado».</li>
+      <li><strong>Comprobaciones.</strong> Se pasaron comprobaciones automáticas (nombres de partidos o políticos, resúmenes vacíos, indicación del resultado) y se leyó una muestra al azar. <strong>No se ha revisado cada resumen uno a uno.</strong></li>
+      <li><strong>Qué se descarta.</strong> Votaciones sin título o resumen (por ejemplo, correcciones técnicas sin texto publicado), votaciones sin voto de ningún grupo y votaciones repetidas con el mismo texto (se conserva la última). No se descarta ninguna por su resultado ni porque los grupos coincidan o discrepen. Las enmiendas se incluyen, pero puedes desactivarlas al empezar.</li>
+    </ol>
+
+    <h3>Cómo se calcula la afinidad</h3>
+    <ul>
+      <li><strong>Posición de un grupo</strong> en una votación: la opción (a favor, en contra, abstención) que supera el 50 % de sus miembros, contando también a quienes no votaron. Si ninguna lo supera, el grupo está «dividido» y esa votación no cuenta para él.</li>
+      <li><strong>Tu respuesta</strong> (aprobar, rechazar, abstención) se compara con la posición de cada grupo: coincidencia exacta = 1 punto; abstención frente a sí/no = 0,5; sí frente a no = 0.</li>
+      <li><strong>Afinidad</strong> = suma de puntos ÷ número de votaciones comparables, en porcentaje. Cada grupo tiene su propio número de votaciones comparables, que se muestra en el resultado.</li>
+      <li><strong>Mixto.</strong> El diputado de Vox que pasó al Grupo Mixto cuenta como Vox. BNG, Coalición Canaria y UPN se muestran por separado. Los diputados del Mixto que proceden de Podemos y otros partidos ex-Sumar aparecen como una entidad aparte.</li>
+      <li>La afinidad mide <em>coincidencia en esas votaciones concretas</em>. No es una recomendación de voto ni resume el programa de nadie: un partido puede votar en bloque y otro cambiar de criterio, y las votaciones sobre leyes pueden incluir cuestiones técnicas.</li>
+    </ul>
+
+    <div class="notice"><strong>Aviso.</strong> Si el resultado no te gusta, o quieres comprobarlo, revisa la documentación oficial del Congreso (<a href="https://www.congreso.es" target="_blank" rel="noopener">congreso.es</a>): la IA puede haber cometido errores en los textos y resúmenes. <strong>Puedes estar votando a quien no te representa.</strong></div>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+const NOMBRES={PP:"PP",PSOE:"PSOE",Vox:"Vox",Sumar:"Sumar",ERC:"ERC",Junts:"Junts",Bildu:"EH Bildu",PNV:"PNV",
+  BNG:"BNG",CC:"Coalición Canaria",UPN:"UPN",SumarMx:"Mixto (Podemos y otros ex-Sumar)"};
+const ETQ={S:"Aprobar",N:"Rechazar",A:"Abstención",D:"Dividido"};
+const TIPOS={PNL:"Proposición no de ley",mocion:"Moción",proyecto_ley:"Proyecto de ley",proposicion_ley:"Proposición de ley",convenio:"Convenio internacional",otro:"Otro"};
+const $=id=>document.getElementById(id);
+let DATA=null, preguntas=[], respuestas=[], idx=0;
+
+function barajar(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function elegibles(){const enm=$("enm").checked,apr=$("apr").checked;
+  return DATA.items.filter(i=>(enm||!i.enm)&&(apr||!i.apr))}
+function actualizarConteo(){if(!DATA)return;const n=elegibles().length;$("count").textContent=n+" propuestas disponibles con esta selección."}
+$("n").addEventListener("input",()=>{$("nval").textContent=$("n").value});
+$("enm").addEventListener("change",actualizarConteo);$("apr").addEventListener("change",actualizarConteo);
+
+fetch("quiz.json").then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(d=>{
+  DATA=d;$("load").textContent="";$("start").disabled=false;actualizarConteo();rellenarPeriodo();
+}).catch(e=>{$("load").innerHTML='<span class="err">No se pudieron cargar los datos ('+e.message+'). Si abriste el archivo con doble clic, sírvelo con <code>python3 -m http.server</code>.</span>'});
+
+$("start").addEventListener("click",empezar);$("again").addEventListener("click",()=>{show("intro");window.scrollTo(0,0)});
+$("back").addEventListener("click",()=>{if(idx>0){idx--;respuestas.length=idx;pintar()}});
+document.querySelectorAll(".answers button").forEach(b=>b.addEventListener("click",()=>responder(b.dataset.a)));
+document.addEventListener("keydown",e=>{if($("quiz").classList.contains("hidden"))return;
+  const m={"1":"S","2":"N","3":"A"};if(m[e.key])responder(m[e.key])});
+
+const FMT=f=>new Date(f+"T00:00:00").toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"});
+function rellenarPeriodo(){const fs=DATA.items.map(i=>i.f).sort();
+  $("d1").textContent=FMT(fs[0]);$("d2").textContent=FMT(fs[fs.length-1]);$("dn").textContent=DATA.items.length;
+  $("periodo").textContent="Basado en la XV Legislatura (desde el 17 de agosto de 2023, en curso): votaciones del Pleno del "+FMT(fs[0])+" al "+FMT(fs[fs.length-1])+"."}
+const dlg=$("info");
+function abrirInfo(){if(dlg.showModal)dlg.showModal();else dlg.setAttribute("open","")}
+$("openInfo").addEventListener("click",abrirInfo);$("openInfo2").addEventListener("click",abrirInfo);
+$("closeInfo").addEventListener("click",()=>dlg.close());
+dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
+function show(id){["intro","quiz","results"].forEach(s=>$(s).classList.toggle("hidden",s!==id))}
+function empezar(){const n=Math.min(+$("n").value,elegibles().length);
+  preguntas=barajar(elegibles()).slice(0,n);respuestas=[];idx=0;show("quiz");pintar();window.scrollTo(0,0)}
+function pintar(){const q=preguntas[idx];
+  $("qn").textContent="Pregunta "+(idx+1)+" de "+preguntas.length;
+  $("bar").style.width=(idx/preguntas.length*100)+"%";
+  $("qt").textContent=q.t;$("qs").textContent=q.r;
+  const f=new Date(q.f+"T00:00:00").toLocaleDateString("es-ES",{year:"numeric",month:"long"});
+  $("tags").innerHTML=[TIPOS[q.tipo]||q.tipo,f,q.enm?"Enmienda":"",q.tot?"Enmienda a la totalidad":"",q.apr?"Resumen aproximado":""]
+    .filter(Boolean).map(t=>'<span class="tag">'+t+'</span>').join("");
+  $("back").style.visibility=idx?"visible":"hidden"}
+function responder(a){respuestas[idx]=a;idx++;if(idx>=preguntas.length)resultados();else{pintar();window.scrollTo(0,0)}}
+
+// Coincidencia: igual = 1; abstención frente a sí/no = 0,5; sí frente a no = 0. "Dividido"/sin dato: no puntúa.
+function puntos(u,g){if(!g||g==="D")return null;if(u===g)return 1;if(u==="A"||g==="A")return .5;return 0}
+function resultados(){
+  const filas=DATA.grupos.map(k=>{let s=0,n=0;preguntas.forEach((q,i)=>{const p=puntos(respuestas[i],q.v[k]);if(p!==null){s+=p;n++}});
+    return{k,n,pct:n?Math.round(s/n*100):null}}).filter(f=>f.pct!==null).sort((a,b)=>b.pct-a.pct);
+  $("rank").innerHTML=filas.map(f=>'<div class="res"><div class="name">'+NOMBRES[f.k]+'<small>'+f.n+' votaciones comparables</small></div>'+
+    '<div class="bar"><i style="width:'+f.pct+'%"></i></div><div class="pct">'+f.pct+'%</div></div>').join("");
+  $("how").textContent="Cómo se calcula: coincidencia exacta suma 1, abstención frente a sí/no suma 0,5 y sí frente a no suma 0. Se ignoran las votaciones en que el grupo estuvo dividido (ningún voto superó el 50 % de sus miembros). Un diputado de Vox que pasó al Mixto cuenta con Vox. Los diputados del Mixto de BNG, CC y UPN aparecen por separado.";
+  $("review").innerHTML=preguntas.map((q,i)=>{
+    const g=DATA.grupos.map(k=>'<span>'+NOMBRES[k].split(" (")[0]+': <b class="v-'+(q.v[k]||"")+'">'+(ETQ[q.v[k]]||"—")+'</b></span>').join("");
+    return '<details><summary>'+(i+1)+'. '+q.t+' — tú: <span class="v-'+respuestas[i]+'">'+ETQ[respuestas[i]]+'</span></summary>'+
+      '<p>'+q.r+'</p><p class="muted">Resultado en el Pleno: '+q.res+' ('+q.sf+' a favor, '+q.ec+' en contra, '+q.ab+' abstenciones)</p><div class="grp">'+g+'</div></details>'}).join("");
+  show("results");window.scrollTo(0,0)}
+</script>
+</body>
+</html>
