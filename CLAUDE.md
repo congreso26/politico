@@ -147,7 +147,8 @@ python scripts/main.py --urls URL1 URL2 ...
 3. Texto realmente votado por votación: `data/votaciones_texto/*.jsonl` (texto_votado, fuente_url, confianza alta/media/baja/ninguna), volcado con `scripts/volcar_textos.py`.
 4. Títulos y resúmenes: `data/resumenes/*.jsonl`, volcado con `scripts/volcar_resumenes.py`. Anónimos, sin resultado, 2 frases. `resumen_aproximado` = texto cortado o confianza no alta.
 5. `es_enmienda` marca enmiendas (se pueden excluir del quiz). Las enmiendas a la totalidad no entran en esa marca.
-6. Estado y pendientes: `PLAN_REHACER.md` (sesión 203 sin votaciones publicadas a 3/10/2026; 26 votaciones sin texto: correcciones técnicas y votos particulares).
+6. `scripts/generar_quiz.py` → `web/quiz.json` (app estática en cliente). Reglas de eliminación, únicas y en este orden: R1 sin título o sin resumen; R2 sin voto de ningún grupo; R3 mismo título y mismo resumen (votaciones repetidas): se conserva la última en el orden del CSV. No se elimina nada por tipo (las enmiendas entran), resultado, grupos divididos, resumen aproximado ni confianza. El informe de cada ejecución y el JSON (`descartes`) cuentan cuántas elimina cada regla.
+7. Estado y pendientes: `PLAN_REHACER.md` (sesión 203 sin votaciones publicadas a 3/10/2026; 26 votaciones sin texto: correcciones técnicas y votos particulares).
 
 ## Pendiente / decisiones abiertas
 - **Rellenar títulos y resúmenes** de las 21 votaciones de la sesión 202 (siguiente paso inmediato).
