@@ -4,8 +4,13 @@ Copyright 2026 los autores del proyecto
 Este software (scripts/, web/index.html y herramientas asociadas) se distribuye bajo la
 Licencia Apache, Versión 2.0 (ver fichero LICENSE).
 
-Alcance: la licencia Apache 2.0 de este repositorio se aplica al CÓDIGO. Los datos y textos de
-data/ y web/quiz.json (votaciones oficiales del Congreso de los Diputados y títulos y resúmenes
-redactados con ayuda de IA) se rigen por sus propias condiciones, que no están definidas por
-esta licencia. Las votaciones proceden del portal de datos abiertos del Congreso
-(https://www.congreso.es/es/opendata) y sus textos, del BOCG, el Diario de Sesiones y el BOE.
+Alcance de las licencias:
+- CÓDIGO (scripts/, web/index.html y herramientas asociadas): Licencia Apache 2.0 (LICENSE).
+- DATOS PUBLICADOS (web/quiz.json): Creative Commons Atribución 4.0 Internacional, CC BY 4.0
+  (LICENSE-DATOS; https://creativecommons.org/licenses/by/4.0/deed.es). La licencia cubre la
+  aportación de los autores (selección y organización de los datos, títulos y resúmenes redactados
+  con ayuda de IA). Al reutilizarlo hay que atribuir la fuente: "Congreso de los Diputados
+  (datos abiertos, BOCG y Diario de Sesiones) y BOE; títulos y resúmenes de los autores de
+  '¿Estoy votando bien?', redactados con IA". Los textos oficiales originales son del Congreso y
+  el BOE y se rigen por sus propias condiciones de reutilización.
+- Otros ficheros de data/: sin licencia declarada por ahora.

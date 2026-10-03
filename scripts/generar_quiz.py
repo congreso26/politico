@@ -20,6 +20,13 @@ import csv, json, sys
 from datetime import date
 from pathlib import Path
 
+LICENCIA = {
+    "nombre": "Creative Commons Atribución 4.0 Internacional (CC BY 4.0)",
+    "url": "https://creativecommons.org/licenses/by/4.0/deed.es",
+    "atribucion": "Datos de votaciones y textos: Congreso de los Diputados (congreso.es, datos abiertos, "
+                  "BOCG y Diario de Sesiones) y BOE. Títulos, resúmenes y selección: autores del proyecto "
+                  "'¿Estoy votando bien?', redactados con ayuda de IA.",
+}
 GRUPOS = {  # clave corta -> columna del CSV
     "PP": "PP_voto", "PSOE": "PSOE_voto", "Vox": "Vox_voto", "Sumar": "Sumar_voto",
     "ERC": "ERC_voto", "Junts": "Junts_voto", "Bildu": "Bildu_voto", "PNV": "PNV_voto",
@@ -59,7 +66,7 @@ def main(out: str) -> None:
     meta = {"filas_csv": len(filas), "R1_sin_titulo_o_resumen": r1, "R2_sin_voto_de_ningun_grupo": r2,
             "R3_repetidas_se_conserva_la_ultima": r3}
     Path(out).parent.mkdir(parents=True, exist_ok=True)
-    json.dump({"generado": date.today().isoformat(), "n": len(finales), "descartes": meta,
+    json.dump({"generado": date.today().isoformat(), "n": len(finales), "licencia": LICENCIA, "descartes": meta,
                "grupos": list(GRUPOS), "items": finales},
               open(out, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     kb = Path(out).stat().st_size / 1024
