@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """
 Fase 1: asigna expediente a cada votación cruzando el texto de la votación
 con el orden del día de la sesión (tramit_pleno{fecha}_{N}.pdf).

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """
 Descarga JSONs de votaciones individuales del Congreso de los Diputados.
 """

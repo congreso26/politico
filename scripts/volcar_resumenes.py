@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """Vuelca data/resumenes/*.jsonl (titulo, resumen, aproximado) en data/votaciones.csv.
 No toca filas que ya tengan título (p. ej. sesión 202)."""
 import csv, glob, json, sys

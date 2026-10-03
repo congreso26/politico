@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """Vuelca data/votaciones_texto/*.jsonl en data/votaciones.csv (texto_votado, confianza_texto,
 fuente_texto) y corrige `expediente` cuando el agente lo corrigió."""
 import csv, glob, json, sys

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """Genera web/quiz.json desde data/votaciones.csv para la app estática del test de afinidad.
 
 REGLAS DE ELIMINACIÓN (únicas; se aplican en este orden y el informe cuenta cada una):

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """
 Fase 2: dado un expediente (p. ej. 162/000117), localiza su texto en el BOCG
 y escribe data/iniciativas/{tipo}_{num}.json.

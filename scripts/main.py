@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """
 Herramienta para generar la base de datos de votaciones del Pleno del Congreso.
 

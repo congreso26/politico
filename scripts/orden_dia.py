@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """
 Descarga y parsea el PDF del orden del día del Pleno del Congreso.
 

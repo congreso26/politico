@@ -1,0 +1,11 @@
+¿Estoy votando bien? – test de afinidad con el Congreso de los Diputados
+Copyright 2026 los autores del proyecto
+
+Este software (scripts/, web/index.html y herramientas asociadas) se distribuye bajo la
+Licencia Apache, Versión 2.0 (ver fichero LICENSE).
+
+Alcance: la licencia Apache 2.0 de este repositorio se aplica al CÓDIGO. Los datos y textos de
+data/ y web/quiz.json (votaciones oficiales del Congreso de los Diputados y títulos y resúmenes
+redactados con ayuda de IA) se rigen por sus propias condiciones, que no están definidas por
+esta licencia. Las votaciones proceden del portal de datos abiertos del Congreso
+(https://www.congreso.es/es/opendata) y sus textos, del BOCG, el Diario de Sesiones y el BOE.

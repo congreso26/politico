@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """
 Descarga el CSV de diputados activos del Congreso (XV Legislatura),
 filtra los del Grupo Mixto y genera mixto_partidos.json con el mapeo:

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
 """
 Descarga PDFs del BOCG y extrae el texto relevante de cada iniciativa.
 """
