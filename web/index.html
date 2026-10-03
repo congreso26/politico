@@ -87,7 +87,7 @@ code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
     <p id="count" class="muted" style="font-size:.9rem"></p>
   </div>
   <p class="muted" id="periodo" style="font-size:.9rem"></p>
-  <div class="notice"><strong>Los títulos y resúmenes los ha redactado una IA</strong> a partir del texto oficial y pueden contener errores. Los votos de los grupos son datos oficiales del Congreso. Todo ocurre en tu navegador: tus respuestas no se envían a ningún sitio. <button class="link" type="button" id="openInfo2">Ver cómo se ha hecho</button></div>
+  <div class="notice">Herramienta para <strong>entretener y concienciar</strong> sobre lo que pasa en el Congreso después de votar en unas elecciones. <strong>Los títulos y resúmenes los ha redactado una IA</strong> a partir del texto oficial: pueden contener errores, y los autores no ofrecen garantías de exactitud ni de corrección. Los votos de los grupos son datos oficiales del Congreso. Todo ocurre en tu navegador: tus respuestas no se envían a ningún sitio. <button class="link" type="button" id="openInfo2">Ver cómo se ha hecho y el descargo de responsabilidad</button></div>
 </section>
 
 <section id="quiz" class="hidden">
@@ -110,13 +110,14 @@ code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
   <h1>Tu afinidad</h1>
   <p class="muted">Porcentaje de coincidencia entre tus respuestas y la posición de cada grupo en esas mismas votaciones.</p>
   <div class="card" id="rank"></div>
-  <div class="notice" id="disc">Este resultado es orientativo. Si no te convence, o quieres comprobarlo, <strong>consulta la documentación oficial del Congreso</strong> (<a href="https://www.congreso.es" target="_blank" rel="noopener">congreso.es</a>): la IA puede haber cometido errores en los textos y resúmenes. <strong>Puedes estar votando a quien no te representa.</strong></div>
+  <div class="notice" id="disc">Este resultado es <strong>orientativo</strong>: no es una recomendación de voto ni una garantía de exactitud. Usa tu propio criterio y <strong>comprueba en la documentación oficial del Congreso</strong> (<a href="https://www.congreso.es" target="_blank" rel="noopener">congreso.es</a>) si tu grupo favorito coincide de verdad con tus opiniones e intereses; la IA puede haber cometido errores en los textos y resúmenes. <strong>Puedes estar votando a quien no te representa.</strong></div>
   <p class="muted" style="font-size:.88rem" id="how"></p>
   <h2>Repaso de tus respuestas</h2>
   <div class="card" id="review"></div>
   <div class="row" style="margin-top:18px"><button class="primary" id="again">Repetir con otras preguntas</button></div>
 </section>
 <footer class="muted" style="font-size:.8rem;margin-top:28px;border-top:1px solid var(--line);padding-top:12px">
+  Herramienta para entretener y concienciar; sin garantías de exactitud ni de corrección, y no es una recomendación de voto.
   Datos: Congreso de los Diputados (datos abiertos, BOCG y Diario de Sesiones) y BOE. Títulos y resúmenes redactados con ayuda de IA por los autores del proyecto.
   Datos bajo licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">CC BY 4.0</a>; código bajo Apache 2.0.
 </footer>
@@ -147,7 +148,14 @@ code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
       <li>La afinidad mide <em>coincidencia en esas votaciones concretas</em>. No es una recomendación de voto ni resume el programa de nadie: un partido puede votar en bloque y otro cambiar de criterio, y las votaciones sobre leyes pueden incluir cuestiones técnicas.</li>
     </ul>
 
-    <div class="notice"><strong>Aviso.</strong> Si el resultado no te gusta, o quieres comprobarlo, revisa la documentación oficial del Congreso (<a href="https://www.congreso.es" target="_blank" rel="noopener">congreso.es</a>): la IA puede haber cometido errores en los textos y resúmenes. <strong>Puedes estar votando a quien no te representa.</strong></div>
+    <h3>Finalidad y descargo de responsabilidad</h3>
+    <ul>
+      <li><strong>Finalidad.</strong> Es una herramienta para entretener y concienciar: recordar a cada ciudadano lo que hacen los grupos parlamentarios en el Congreso después de unas elecciones, votación a votación.</li>
+      <li><strong>Sin garantías.</strong> Los autores del proyecto no dan ninguna garantía de exactitud, integridad ni corrección de los datos, textos, resúmenes ni resultados. Aunque los votos son datos oficiales, su tratamiento, la selección de votaciones y los resúmenes (hechos con IA) pueden contener errores. Se ofrece «tal cual», sin responsabilidad por el uso que se haga.</li>
+      <li><strong>Juzga por ti mismo.</strong> Corresponde a cada persona usar su criterio y valorar, con los datos oficiales del Congreso a la vista, si el grupo que prefiere coincide de verdad con sus opiniones e intereses. Si el resultado no te gusta, o quieres comprobarlo, revisa la documentación oficial (<a href="https://www.congreso.es" target="_blank" rel="noopener">congreso.es</a>).</li>
+      <li><strong>Lo que no es.</strong> No es una recomendación de voto, ni una encuesta, ni un análisis de programas electorales, y no está vinculado al Congreso ni a ninguna formación política.</li>
+    </ul>
+    <div class="notice"><strong>Puedes estar votando a quien no te representa.</strong> Comprueba siempre la información en fuentes oficiales.</div>
   </div>
 </dialog>
 
