@@ -87,7 +87,7 @@ code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
     <p id="count" class="muted" style="font-size:.9rem"></p>
   </div>
   <p class="muted" id="periodo" style="font-size:.9rem"></p>
-  <div class="notice">Herramienta para <strong>entretener y concienciar</strong> sobre lo que pasa en el Congreso después de votar en unas elecciones. <strong>Los títulos y resúmenes los ha redactado una IA</strong> a partir del texto oficial: pueden contener errores, y los autores no ofrecen garantías de exactitud ni de corrección. Los votos de los grupos son datos oficiales del Congreso. Todo ocurre en tu navegador: tus respuestas no se envían a ningún sitio. <button class="link" type="button" id="openInfo2">Ver cómo se ha hecho y el descargo de responsabilidad</button></div>
+  <div class="notice">Herramienta para <strong>entretener y concienciar</strong> sobre lo que pasa en el Congreso después de votar en unas elecciones. <strong>Los títulos y resúmenes los ha redactado una IA</strong> a partir del texto oficial: pueden contener errores, y los autores no ofrecen garantías de exactitud ni de corrección. Los votos de los grupos son datos oficiales del Congreso. Todo ocurre en tu navegador: tus respuestas no se envían a ningún sitio. Solo se cuenta, de forma anónima y sin cookies, cuánta gente visita la página. <button class="link" type="button" id="openInfo2">Ver cómo se ha hecho y el descargo de responsabilidad</button></div>
 </section>
 
 <section id="quiz" class="hidden">
@@ -119,7 +119,7 @@ code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
 <footer class="muted" style="font-size:.8rem;margin-top:28px;border-top:1px solid var(--line);padding-top:12px">
   Herramienta para entretener y concienciar; sin garantías de exactitud ni de corrección, y no es una recomendación de voto.
   Datos: Congreso de los Diputados (datos abiertos, BOCG y Diario de Sesiones) y BOE. Títulos y resúmenes redactados con ayuda de IA por los autores del proyecto.
-  Datos bajo licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">CC BY 4.0</a>; código bajo Apache 2.0.
+  Contador de visitas anónimo y sin cookies. Datos bajo licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">CC BY 4.0</a>; código bajo Apache 2.0.
 </footer>
 </main>
 
@@ -148,6 +148,12 @@ code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
       <li>La afinidad mide <em>coincidencia en esas votaciones concretas</em>. No es una recomendación de voto ni resume el programa de nadie: un partido puede votar en bloque y otro cambiar de criterio, y las votaciones sobre leyes pueden incluir cuestiones técnicas.</li>
     </ul>
 
+    <h3>Privacidad</h3>
+    <ul>
+      <li><strong>Tus respuestas no salen de tu navegador.</strong> El test se calcula en tu dispositivo y no se guarda ni se envía nada.</li>
+      <li><strong>Contador de visitas anónimo.</strong> La página usa <a href="https://www.goatcounter.com" target="_blank" rel="noopener">GoatCounter</a>, un contador sin cookies que no guarda datos personales ni sigue a nadie entre sitios web. Solo cuenta visitas, para saber si alguien usa el proyecto.</li>
+    </ul>
+
     <h3>Finalidad y descargo de responsabilidad</h3>
     <ul>
       <li><strong>Finalidad.</strong> Es una herramienta para entretener y concienciar: recordar a cada ciudadano lo que hacen los grupos parlamentarios en el Congreso después de unas elecciones, votación a votación.</li>
@@ -166,6 +172,11 @@ const NOMBRES={PP:"PP",PSOE:"PSOE",Vox:"Vox",Sumar:"Sumar",ERC:"ERC",Junts:"Junt
 const ETQ={S:"Aprobar",N:"Rechazar",A:"Abstención",D:"Dividido"};
 const TIPOS={PNL:"Proposición no de ley",mocion:"Moción",proyecto_ley:"Proyecto de ley",proposicion_ley:"Proposición de ley",convenio:"Convenio internacional",otro:"Otro"};
 const $=id=>document.getElementById(id);
+
+// Contador de visitas anónimo (GoatCounter, sin cookies). Vacío = desactivado.
+const GC_CODE="congreso26";
+if(GC_CODE){const g=document.createElement("script");g.async=true;
+  g.dataset.goatcounter="https://"+GC_CODE+".goatcounter.com/count";g.src="https://gc.zgo.at/count.js";document.head.appendChild(g)}
 let DATA=null, preguntas=[], respuestas=[], idx=0;
 
 function barajar(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}

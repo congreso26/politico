@@ -18,7 +18,7 @@ Fuentes: [datos abiertos del Congreso](https://www.congreso.es/es/opendata/votac
 2. **Posición de cada grupo.** Un grupo vota *a favor*, *en contra* o *abstención* si esa opción supera el 50 % de sus miembros (contando también a quienes no votan). Si ninguna lo supera, el grupo está *dividido* y esa votación no cuenta para él.
 3. **Qué se votaba.** Los datos oficiales de votación solo dicen «Punto 3» o «Enmienda 9». Se cruza cada votación con el orden del día para obtener el expediente y se localiza el texto en el BOCG, el Diario de Sesiones o el BOE.
 4. **Títulos y resúmenes.** Una IA redacta el título y el resumen de lo que se vota en cada votación, con tres reglas: no nombrar grupos, partidos ni personas, no indicar el resultado, y describir solo lo que se vota. Los resúmenes con texto incompleto o reconstruido se marcan como *aproximados*.
-5. **Test.** Una página estática sortea *N* propuestas, recoge tu respuesta y calcula la afinidad. Todo ocurre en tu navegador: nada se envía a ningún servidor.
+5. **Test.** Una página estática sortea *N* propuestas, recoge tu respuesta y calcula la afinidad. Todo ocurre en tu navegador: tus respuestas no se envían a ningún servidor. La página incluye un contador de visitas anónimo y sin cookies ([GoatCounter](https://www.goatcounter.com)), que solo cuenta visitas.
 
 ### Cálculo de la afinidad
 
