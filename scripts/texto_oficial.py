@@ -6,7 +6,7 @@ Transformaciones permitidas (únicas): quitar cabecera/pie del BOCG y U+200B, un
 mismo párrafo. es_literal() comprueba que un fragmento está tal cual (salvo espacios y signos)
 en el documento: nada que no lo pase se publica en la web.
 """
-import io, logging, re, unicodedata
+import functools, io, logging, re, unicodedata
 from pathlib import Path
 from pypdf import PdfReader
 import iniciativas
@@ -82,19 +82,25 @@ def cortar(paginas: list[str], desde: str, hasta: str | None) -> str | None:
     return doc[m.start(): m.end() + fin.start() if fin else len(doc)].strip()
 
 
-def recortar(fragmento: str, paginas: list[str]) -> str | None:
-    """Devuelve el trozo CRUDO del documento que coincide con fragmento (salvo mayúsculas,
-    espacios y signos), con la puntuación y las mayúsculas del PDF. None si no está o si
-    empieza o acaba en mitad de una palabra."""
+@functools.lru_cache(maxsize=8)
+def _indice(paginas: tuple):
+    """Texto crudo, texto normalizado y mapa carácter normalizado -> posición cruda (cacheado)."""
     doc = unicodedata.normalize("NFC", "\n".join(paginas)).replace("\u200b", "")
-    f = norm(fragmento)
-    if len(f) < 20:
-        return None
     chars, offs = [], []
     for i, c in enumerate(doc):
         n = norm(c)
         chars.append(n); offs.extend([i] * len(n))
-    plano = "".join(chars)
+    return doc, "".join(chars), offs
+
+
+def recortar(fragmento: str, paginas: list[str]) -> str | None:
+    """Devuelve el trozo CRUDO del documento que coincide con fragmento (salvo mayúsculas,
+    espacios y signos), con la puntuación y las mayúsculas del PDF. None si no está o si
+    empieza o acaba en mitad de una palabra."""
+    f = norm(fragmento)
+    if len(f) < 20:
+        return None
+    doc, plano, offs = _indice(tuple(paginas))
     k = plano.find(f)
     while k >= 0:
         ini, fin = offs[k], offs[k + len(f) - 1]

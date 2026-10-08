@@ -21,6 +21,19 @@ class T(unittest.TestCase):
         f = {"sesion": "1", "num_votacion": "1", "fuente_texto": "u", "texto_votado": "Texto cortado a media pala…"}
         self.assertEqual(G.localizadores_auto(f), [])
 
+    def test_truncado_ascii(self):
+        for t in ("Texto con [...] cortado", "Texto cortado..."):
+            f = {"sesion": "1", "num_votacion": "1", "fuente_texto": "u", "texto_votado": t}
+            self.assertEqual(G.localizadores_auto(f), [])
+
+    def test_extraer_rechaza_sin_cierre(self):
+        pags = ["El Congreso insta al Gobierno a: 1. Hacer cosas concretas y de otros medios"]
+        with mock.patch.object(G.texto_oficial, "paginas_pdf", return_value=pags):
+            G.paginas.cache_clear()
+            r = G.extraer({"id": "x", "doc": "u", "sel": {"literal": "Hacer cosas concretas y de otros medios"}})
+        G.paginas.cache_clear()
+        self.assertIsNone(r)
+
     def test_empieza_en_el_congreso(self):
         f = {"sesion": "1", "num_votacion": "1", "fuente_texto": "u",
              "texto_votado": "presenta la siguiente Moción «El Congreso de los Diputados insta a: 1. Algo."}
