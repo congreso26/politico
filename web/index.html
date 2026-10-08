@@ -68,6 +68,7 @@ dialog .body{padding:6px 18px 20px}
 dialog h3{margin:20px 0 4px;font-size:1.02rem}
 dialog ol,dialog ul{padding-left:22px;margin:6px 0}
 dialog li{margin:5px 0}
+#txBody .frag{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.95rem;line-height:1.55;border-left:3px solid var(--line);padding-left:12px;margin:12px 0}
 code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
 @media (min-width:700px){main{padding-top:32px}.answers .wrap{max-width:720px}}
 </style>
@@ -97,6 +98,7 @@ code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
     <div id="tags"></div>
     <h2 class="q-title" id="qt" style="margin-top:0"></h2>
     <p class="q-sum" id="qs"></p>
+    <button class="link" type="button" id="verTexto">Ver texto oficial de lo que se votó</button>
   </article>
   <p class="hint">Atajos de teclado: <span class="kbd">1</span> aprobar · <span class="kbd">2</span> rechazar · <span class="kbd">3</span> abstención</p>
   <div class="answers"><div class="wrap">
@@ -165,6 +167,16 @@ code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
   </div>
 </dialog>
 
+<dialog id="tx" aria-labelledby="txT">
+  <div class="head"><h2 id="txT">Texto oficial</h2><button type="button" id="closeTx" aria-label="Cerrar">Cerrar ✕</button></div>
+  <div class="body">
+    <p class="muted" style="font-size:.88rem">Copiado literalmente del documento oficial, sin modificar (solo se han quitado cabeceras de página y unido líneas). Puede contener saltos o símbolos de la extracción del PDF. No es un texto redactado por IA.</p>
+    <h3 id="txTit"></h3><p id="txSub" class="muted"></p>
+    <div id="txBody"></div>
+    <p id="txSrc" style="font-size:.9rem"></p>
+  </div>
+</dialog>
+
 <script>
 "use strict";
 const NOMBRES={PP:"PP",PSOE:"PSOE",Vox:"Vox",Sumar:"Sumar",ERC:"ERC",Junts:"Junts",Bildu:"EH Bildu",PNV:"PNV",
@@ -193,7 +205,7 @@ fetch("quiz.json").then(r=>{if(!r.ok)throw new Error(r.status);return r.json()})
 $("start").addEventListener("click",empezar);$("again").addEventListener("click",()=>{show("intro");window.scrollTo(0,0)});
 $("back").addEventListener("click",()=>{if(idx>0){idx--;respuestas.length=idx;pintar()}});
 document.querySelectorAll(".answers button").forEach(b=>b.addEventListener("click",()=>responder(b.dataset.a)));
-document.addEventListener("keydown",e=>{if($("quiz").classList.contains("hidden"))return;
+document.addEventListener("keydown",e=>{if(tx.open||dlg.open)return;if($("quiz").classList.contains("hidden"))return;
   const m={"1":"S","2":"N","3":"A"};if(m[e.key])responder(m[e.key])});
 
 const FMT=f=>new Date(f+"T00:00:00").toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"});
@@ -205,6 +217,22 @@ function abrirInfo(){if(dlg.showModal)dlg.showModal();else dlg.setAttribute("ope
 $("openInfo").addEventListener("click",abrirInfo);$("openInfo2").addEventListener("click",abrirInfo);
 $("closeInfo").addEventListener("click",()=>dlg.close());
 dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
+const tx=$("tx"),TXC={};
+function el(tag,txt,cls){const e=document.createElement(tag);if(txt)e.textContent=txt;if(cls)e.className=cls;return e}
+function enlace(href,txt){const a=el("a",txt);a.href=href;a.target="_blank";a.rel="noopener";return a}
+function abrirTexto(id){
+  $("txTit").textContent="Cargando…";$("txSub").textContent="";$("txBody").replaceChildren();$("txSrc").replaceChildren();
+  if(tx.showModal)tx.showModal();else tx.setAttribute("open","");
+  (TXC[id]?Promise.resolve(TXC[id]):fetch("textos/"+id+".json").then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}))
+  .then(d=>{TXC[id]=d;$("txTit").textContent=d.titulo;$("txSub").textContent=d.subgrupo;
+    if(d.estado==="literal")d.fragmentos.forEach(f=>{$("txBody").append(el("div",f.texto,"frag"));
+      $("txSrc").append(enlace(f.fuente+(f.pagina?"#page="+f.pagina:""),"Documento oficial"+(f.pagina?" (pág. "+f.pagina+")":"")),el("br"))});
+    else $("txBody").append(el("p",d.estado==="no_publicado"?"El texto de esta votación no se publicó en el Boletín Oficial.":"Todavía no hemos extraído el texto literal de esta votación. Puedes consultarlo en la ficha oficial de la iniciativa.","muted"));
+    if(d.fuente_ficha)$("txSrc").append(enlace(d.fuente_ficha,"Ficha de la iniciativa en congreso.es"))})
+  .catch(()=>{$("txTit").textContent="No se ha podido cargar el texto";$("txBody").append(el("p","Comprueba la conexión o consulta congreso.es.","muted"))})}
+$("verTexto").addEventListener("click",()=>abrirTexto(preguntas[idx].id));
+$("closeTx").addEventListener("click",()=>tx.close());
+tx.addEventListener("click",e=>{if(e.target===tx)tx.close()});
 function show(id){["intro","quiz","results"].forEach(s=>$(s).classList.toggle("hidden",s!==id))}
 function empezar(){const n=Math.min(+$("n").value,elegibles().length);
   preguntas=barajar(elegibles()).slice(0,n);respuestas=[];idx=0;show("quiz");pintar();window.scrollTo(0,0)}
@@ -229,7 +257,8 @@ function resultados(){
   $("review").innerHTML=preguntas.map((q,i)=>{
     const g=DATA.grupos.map(k=>'<span>'+NOMBRES[k].split(" (")[0]+': <b class="v-'+(q.v[k]||"")+'">'+(ETQ[q.v[k]]||"—")+'</b></span>').join("");
     return '<details><summary>'+(i+1)+'. '+q.t+' — tú: <span class="v-'+respuestas[i]+'">'+ETQ[respuestas[i]]+'</span></summary>'+
-      '<p>'+q.r+'</p><p class="muted">Resultado en el Pleno: '+q.res+' ('+q.sf+' a favor, '+q.ec+' en contra, '+q.ab+' abstenciones)</p><div class="grp">'+g+'</div></details>'}).join("");
+      '<p>'+q.r+'</p><button class="link" type="button" data-tx="'+q.id+'">Ver texto oficial</button><p class="muted">Resultado en el Pleno: '+q.res+' ('+q.sf+' a favor, '+q.ec+' en contra, '+q.ab+' abstenciones)</p><div class="grp">'+g+'</div></details>'}).join("");
+  $("review").querySelectorAll("[data-tx]").forEach(b=>b.addEventListener("click",()=>abrirTexto(b.dataset.tx)));
   show("results");window.scrollTo(0,0)}
 </script>
 </body>
