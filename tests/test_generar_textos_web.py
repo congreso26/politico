@@ -17,6 +17,29 @@ class T(unittest.TestCase):
         f = {"sesion": "1", "num_votacion": "1", "fuente_texto": "u", "texto_votado": "Inicio del texto […]"}
         self.assertEqual(G.localizadores_auto(f), [])
 
+    def test_truncado_con_puntos_suspensivos(self):
+        f = {"sesion": "1", "num_votacion": "1", "fuente_texto": "u", "texto_votado": "Texto cortado a media pala…"}
+        self.assertEqual(G.localizadores_auto(f), [])
+
+    def test_empieza_en_el_congreso(self):
+        f = {"sesion": "1", "num_votacion": "1", "fuente_texto": "u",
+             "texto_votado": "presenta la siguiente Moción «El Congreso de los Diputados insta a: 1. Algo."}
+        self.assertEqual(G.localizadores_auto(f)[0]["sel"], {"literal": "El Congreso de los Diputados insta a: 1. Algo."})
+
+    def test_corta_boilerplate_final(self):
+        for fin in ("Se ordena la publicación de conformidad", "Palacio del Congreso de los Diputados, 1", "Lo que se publica"):
+            f = {"sesion": "1", "num_votacion": "1", "fuente_texto": "u",
+                 "texto_votado": f"El Congreso de los Diputados insta a: 1. Algo. {fin} con lo dispuesto."}
+            self.assertEqual(G.localizadores_auto(f)[0]["sel"], {"literal": "El Congreso de los Diputados insta a: 1. Algo."})
+
+    def test_extrae_texto_crudo_del_pdf(self):
+        pags = ["El Congreso INSTA al Gobierno a: 1. Hacer cosas concretas."]
+        with mock.patch.object(G.texto_oficial, "paginas_pdf", return_value=pags):
+            G.paginas.cache_clear()
+            r = G.extraer({"id": "x", "doc": "u", "sel": {"literal": "el congreso insta al gobierno a 1 hacer cosas concretas"}})
+        G.paginas.cache_clear()
+        self.assertEqual(r["texto"], "El Congreso INSTA al Gobierno a: 1. Hacer cosas concretas.")
+
     def test_registro_esquema(self):
         r = G.registro("76-3", {"texto_expediente": "Proyecto X.", "titulo_subgrupo": "Enmiendas",
                        "texto_subgrupo": "Enmienda 9."}, [], False, "121/000016")
@@ -30,7 +53,7 @@ class T(unittest.TestCase):
         with mock.patch.object(G.texto_oficial, "paginas_pdf", return_value=pags):
             G.paginas.cache_clear()
             self.assertIsNone(G.extraer({"id": "x", "doc": "u", "sel": {"literal": "Pide hacer cosas concretas al Gobierno."}}))
-            self.assertEqual(G.extraer({"id": "x", "doc": "u", "sel": {"literal": "1. Hacer cosas concretas."}})["pagina"], 1)
+            self.assertEqual(G.extraer({"id": "x", "doc": "u", "sel": {"literal": "1. Hacer cosas concretas"}})["pagina"], 1)
         G.paginas.cache_clear()
 
 

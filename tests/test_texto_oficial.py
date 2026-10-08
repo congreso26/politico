@@ -47,5 +47,16 @@ class TestPdfReal(unittest.TestCase):
         self.assertNotIn("cve: BOCG", t)
         self.assertTrue(T.es_literal(t, pags))
 
+class TRecortar(unittest.TestCase):
+    P = ["Previo.\nEl Congreso INSTA al Gobierno a: 1. Hacer cosas concretas;\n2. Otras cosas distintas. Fin."]
+    def test_devuelve_puntuacion_del_pdf(self):
+        r = T.recortar("el congreso insta al gobierno a 1 hacer cosas concretas", self.P)
+        self.assertEqual(r, "El Congreso INSTA al Gobierno a: 1. Hacer cosas concretas;")
+    def test_mitad_de_palabra_al_inicio(self):
+        self.assertIsNone(T.recortar("ongreso INSTA al Gobierno a: 1. Hacer cosas", self.P))
+    def test_mitad_de_palabra_al_final(self):
+        self.assertIsNone(T.recortar("El Congreso INSTA al Gobierno a: 1. Hacer cosas conc", self.P))
+
+
 if __name__ == "__main__":
     unittest.main()

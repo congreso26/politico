@@ -15,6 +15,8 @@ from iniciativas import FICHA
 
 csv.field_size_limit(10**9)
 OUT = Path("web/textos"); MANUAL = Path("data/localizadores_manual.jsonl")
+INICIO = "El Congreso de los Diputados"
+COLA = re.compile(r"Se ordena la publicación|Palacio del Congreso|Lo que se publica")
 PREFIJOS = re.compile(r"^(?:Texto resultante aprobado|Texto aprobado|Texto votado)\s*:\s*")
 
 
@@ -27,9 +29,14 @@ def paginas(doc: str):
 def localizadores_auto(f: dict) -> list[dict]:
     t, doc = f.get("texto_votado", ""), f.get("fuente_texto", "")
     vid = f"{f['sesion']}-{f['num_votacion']}"
-    if t and doc and "[…]" not in t:
-        return [{"id": vid, "doc": doc, "sel": {"literal": PREFIJOS.sub("", t).strip().strip("«»")}}]
-    return []
+    if not t or not doc or "[…]" in t or t.strip().endswith("…"):
+        return []
+    t = PREFIJOS.sub("", t).strip().strip("«»")
+    if INICIO in t:
+        t = t[t.index(INICIO):]
+    m = COLA.search(t)
+    t = (t[:m.start()] if m else t).strip().strip("«»").strip()
+    return [{"id": vid, "doc": doc, "sel": {"literal": t}}] if t else []
 
 
 def extraer(loc: dict) -> dict | None:
@@ -38,7 +45,7 @@ def extraer(loc: dict) -> dict | None:
         return None
     s = loc["sel"]
     if "literal" in s:
-        t = s["literal"]
+        t = texto_oficial.recortar(s["literal"], pags)
     elif "enmiendas" in s:
         partes = [texto_oficial.cortar(pags, rf"ENMIENDA NÚM\. {n}\b", r"ENMIENDA NÚM\.") for n in s["enmiendas"]]
         t = None if None in partes else "\n\n".join(partes)
