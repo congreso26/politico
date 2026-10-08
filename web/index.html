@@ -68,6 +68,7 @@ dialog .body{padding:6px 18px 20px}
 dialog h3{margin:20px 0 4px;font-size:1.02rem}
 dialog ol,dialog ul{padding-left:22px;margin:6px 0}
 dialog li{margin:5px 0}
+#txTit,#txSub{overflow-wrap:anywhere}
 #txBody .frag{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.95rem;line-height:1.55;border-left:3px solid var(--line);padding-left:12px;margin:12px 0}
 code{background:var(--bar-bg);padding:1px 5px;border-radius:5px;font-size:.88em}
 @media (min-width:700px){main{padding-top:32px}.answers .wrap{max-width:720px}}
@@ -217,19 +218,19 @@ function abrirInfo(){if(dlg.showModal)dlg.showModal();else dlg.setAttribute("ope
 $("openInfo").addEventListener("click",abrirInfo);$("openInfo2").addEventListener("click",abrirInfo);
 $("closeInfo").addEventListener("click",()=>dlg.close());
 dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
-const tx=$("tx"),TXC={};
+const tx=$("tx"),TXC={};let txTok=0;
 function el(tag,txt,cls){const e=document.createElement(tag);if(txt)e.textContent=txt;if(cls)e.className=cls;return e}
 function enlace(href,txt){const a=el("a",txt);a.href=href;a.target="_blank";a.rel="noopener";return a}
-function abrirTexto(id){
+function abrirTexto(id){const my=++txTok;
   $("txTit").textContent="Cargando…";$("txSub").textContent="";$("txBody").replaceChildren();$("txSrc").replaceChildren();
   if(tx.showModal)tx.showModal();else tx.setAttribute("open","");
   (TXC[id]?Promise.resolve(TXC[id]):fetch("textos/"+id+".json").then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}))
-  .then(d=>{TXC[id]=d;$("txTit").textContent=d.titulo;$("txSub").textContent=d.subgrupo;
+  .then(d=>{TXC[id]=d;if(my!==txTok)return;$("txTit").textContent=d.titulo;$("txSub").textContent=d.subgrupo;
     if(d.estado==="literal")d.fragmentos.forEach(f=>{$("txBody").append(el("div",f.texto,"frag"));
-      $("txSrc").append(enlace(f.fuente+(f.pagina?"#page="+f.pagina:""),"Documento oficial"+(f.pagina?" (pág. "+f.pagina+")":"")),el("br"))});
-    else $("txBody").append(el("p",d.estado==="no_publicado"?"El texto de esta votación no se publicó en el Boletín Oficial.":"Todavía no hemos extraído el texto literal de esta votación. Puedes consultarlo en la ficha oficial de la iniciativa.","muted"));
+      $("txSrc").append(enlace(f.fuente.split("#")[0]+(f.pagina?"#page="+f.pagina:""),"Documento oficial"+(f.pagina?" (pág. "+f.pagina+")":"")),el("br"))});
+    else $("txBody").append(el("p",d.estado==="no_publicado"?"El texto de esta votación no se publicó en el Boletín Oficial.":"Todavía no hemos extraído el texto literal de esta votación."+(d.fuente_ficha?" Puedes consultarlo en la ficha oficial de la iniciativa.":""),"muted"));
     if(d.fuente_ficha)$("txSrc").append(enlace(d.fuente_ficha,"Ficha de la iniciativa en congreso.es"))})
-  .catch(()=>{$("txTit").textContent="No se ha podido cargar el texto";$("txBody").append(el("p","Comprueba la conexión o consulta congreso.es.","muted"))})}
+  .catch(()=>{if(my!==txTok)return;$("txTit").textContent="No se ha podido cargar el texto";$("txBody").append(el("p","Comprueba la conexión o consulta congreso.es.","muted"))})}
 $("verTexto").addEventListener("click",()=>abrirTexto(preguntas[idx].id));
 $("closeTx").addEventListener("click",()=>tx.close());
 tx.addEventListener("click",e=>{if(e.target===tx)tx.close()});
