@@ -12,7 +12,7 @@ from pypdf import PdfReader
 import iniciativas
 
 CABECERA = re.compile(r"(?m)^(?:cve: BOCG[^\n]*|BOLETÍN OFICIAL DE LAS CORTES GENERALES|CONGRESO DE LOS DIPUTADOS"
-                      r"|CORTES GENERALES|Serie [A-Z]+ Núm\.[^\n]*Pág\. \d+)\s*\n?")
+                      r"|CORTES GENERALES|Serie [A-Z]+ Núm\.[^\n]*Pág\. \d+)[ \t]*$\n?")
 
 
 def limpiar(t: str) -> str:
@@ -44,10 +44,14 @@ def es_literal(fragmento: str, paginas: list[str]) -> bool:
 
 def pagina_de(fragmento: str, paginas: list[str]) -> int | None:
     cab = norm(fragmento)[:120]
-    acum = ""
-    for i, p in enumerate(paginas, 1):
-        acum += norm(p)
-        if cab in acum:
+    normas = [norm(p) for p in paginas]
+    pos = "".join(normas).find(cab)
+    if not cab or pos < 0:
+        return None
+    fin = 0
+    for i, n in enumerate(normas, 1):
+        fin += len(n)
+        if pos < fin:
             return i
     return None
 

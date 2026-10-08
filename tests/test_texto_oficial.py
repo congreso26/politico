@@ -23,6 +23,20 @@ class TestLiteral(unittest.TestCase):
         p = T.limpiar("texto\ncve: BOCG-15-A-16-2\nBOLETÍN OFICIAL DE LAS CORTES GENERALES\nCONGRESO DE LOS DIPUTADOS\nSerie A Núm. 16-2 26 de junio de 2024 Pág. 2\nsigue\u200b")
         self.assertEqual(p, "texto\nsigue")
 
+class TestFix(unittest.TestCase):
+    def test_limpiar_conserva_lineas_de_cuerpo(self):
+        txt = "CONGRESO DE LOS DIPUTADOS insta al Gobierno\nCORTES GENERALES, aprueba\nCONGRESO DE LOS DIPUTADOS\nCORTES GENERALES\n\nfin"
+        self.assertEqual(T.limpiar(txt), "CONGRESO DE LOS DIPUTADOS insta al Gobierno\nCORTES GENERALES, aprueba\n\nfin")
+    def test_pagina_de_empieza_en_pagina_1(self):
+        pags = ["relleno inicial\nlas últimas palabras del texto que sigue", "y continúa en la segunda página con más texto"]
+        self.assertEqual(T.pagina_de("las últimas palabras del texto que sigue y continúa en la segunda página", pags), 1)
+    def test_parrafos(self):
+        s = "El Congreso insta al\nGobierno a:\n1. Reforzar la red\nferroviaria.\n2. Otra\ncosa."
+        r = T.parrafos(s)
+        self.assertEqual(r, "El Congreso insta al Gobierno a:\n\n1. Reforzar la red ferroviaria.\n\n2. Otra cosa.")
+        self.assertEqual(T.norm(r), T.norm(s))
+
+
 class TestPdfReal(unittest.TestCase):
     PDF = Path("data/pdf_cache/BOCG-15-A-16-2.PDF")
     @unittest.skipUnless(PDF.exists(), "PDF de caché no disponible")
