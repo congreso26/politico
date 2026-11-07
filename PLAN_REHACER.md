@@ -12,7 +12,7 @@
 ## Pendiente
 
 ### Datos
-- **Sesión 203** (2 de octubre de 2026, convalidación de dos reales decretos-ley de vivienda, expedientes 130/000055 y 130/000056): añadir al CSV cuando se publiquen sus votaciones en datos abiertos. Pasos: `python scripts/main.py`; texto votado desde el BOE; título y resumen; volcar con `scripts/volcar_textos.py` y `scripts/volcar_resumenes.py`; regenerar el quiz.
+- **Sesión 203** (2 de octubre de 2026, última de la legislatura; convalidación de los RDL 26/2026 y 27/2026 de vivienda, expedientes 130/000055 y 130/000056): a 7/11/2026 el Congreso solo la ha publicado en datos abiertos como un ZIP con dos PNG, sin JSON nominal. Cargada a mano en el CSV: totales leídos del PNG (172-178-0 y 166-184-0) y posición de cada grupo deducida de la prensa (no de PP, Vox, Junts y UPN; en la segunda, también PNV y CC), que cuadra exactamente con la composición de la sesión 202 (350 diputados, todos votan). Cuando se publique el JSON: `python scripts/main.py` para sustituirla por los datos nominales y comprobar que no cambia nada.
 - **26 votaciones sin texto oficial publicado** (correcciones técnicas, votos particulares del Pacto de Estado de violencia de género): quedan fuera del test mientras no haya texto.
 - **Unas 50 votaciones con confianza baja**, sobre todo transaccionales de comisión cuyo texto exacto no se publica en el BOCG. Pendiente de buscar en el Diario de Sesiones de Comisión.
 - **Revisión de los resúmenes:** 520 están marcados como aproximados. Ampliar la revisión por muestreo y detectar más cruces votación-expediente erróneos comparando el texto de la votación con el texto votado.
