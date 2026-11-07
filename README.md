@@ -8,7 +8,7 @@ La idea es sencilla: que la gente pueda contrastar sus opiniones con los hechos 
 
 ## Qué datos usa
 
-Las votaciones del Pleno de la **XV Legislatura** (desde el 17 de agosto de 2023, en curso). La versión actual incluye 2.122 propuestas votadas entre el 19 de septiembre de 2023 y el 30 de septiembre de 2026. No incluye las comisiones, solo el Pleno.
+Las votaciones del Pleno de la **XV Legislatura** (del 17 de agosto de 2023 a la disolución de las Cortes en octubre de 2026). La versión actual incluye 2.124 propuestas votadas entre el 19 de septiembre de 2023 y el 2 de octubre de 2026, última sesión plenaria de la legislatura. No incluye las comisiones, solo el Pleno.
 
 Fuentes: [datos abiertos del Congreso](https://www.congreso.es/es/opendata/votaciones) (votos por diputado), Boletín Oficial de las Cortes Generales (BOCG), Diario de Sesiones y BOE (textos).
 
